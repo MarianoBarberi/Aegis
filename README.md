@@ -6,7 +6,9 @@
 > Credenciales están en el grupo.
 
 ## /ChatGPT
-Run the ChatGPT application using Streamlit with the following command:
+Corre la aplicación de ChatGPT con el siguiente comando:
 
+> Se necesita tener instalado streamlit.
+> pip install streamlit
 ```bash
 streamlit run app.py
