@@ -1,0 +1,6 @@
+Multiple failed login attempts detected on server 10.0.0.5.
+SQL Injection attempt from 192.168.1.200 on web server at 10.250.95.10 via HTTP port 80
+Failed password for root from 192.168.1.101 port 12345 ssh2
+Possible DDoS attack detected from 172.64.155.209 to 192.168.1.150 ICMP flood
+ARP scan detected on network segment 10.250.95.0/24, originated from 10.250.95.213
+Network scanning activity detected from 192.168.1.101 on multiple ports
