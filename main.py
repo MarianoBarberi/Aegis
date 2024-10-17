@@ -27,10 +27,11 @@ def main():
                 # file_path = ''
                 # df, X = cargar_y_preprocesar_logs(file_path)
                 # model_if = entrenar_isolation_forest(X)
-                # predecir_eventos(df, X, model_if)
-                # if evento sospechoso y es mayor que el ultimo id guardado en la tabla LastId last_IsolationForest_id
-                    # post_output(conn, response, "IsolationForest")
-                    # last_IsolationForest_id = new_rows[-1][0]
+                # response = predecir_eventos(df, X, model_if)
+                # algun for aqui para recorrer el response y postear los eventos sospechosos
+                    # if evento sospechoso y es mayor que el ultimo id guardado en la tabla LastId last_IsolationForest_id
+                        # post_output(conn, response, "IsolationForest")
+                        # last_IsolationForest_id = new_rows[-1][0]
 
                 logging.info(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
