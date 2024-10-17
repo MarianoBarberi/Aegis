@@ -3,6 +3,7 @@ import logging
 import mysql.connector
 from OpenAI import initialize_llm, analyze_row
 from dbConnect import create_connection, check_new_rows, post_output, read_last_id_from_db, write_last_id_to_db
+from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,29 +21,33 @@ def main():
         last_id = read_last_id_from_db(cursor)
 
         while True:
-            new_rows = check_new_rows(cursor, last_id, "IsolationForest")
+            new_rows = check_new_rows(cursor, last_id, "Logs")
 
             if new_rows:
+                # file_path = ''
+                # df, X = cargar_y_preprocesar_logs(file_path)
+                # model_if = entrenar_isolation_forest(X)
+                # predecir_eventos(df, X, model_if)
+                # if evento sospechoso y es mayor que el ultimo id guardado en la tabla LastId last_IsolationForest_id
+                    # post_output(conn, response, "IsolationForest")
+                    # last_IsolationForest_id = new_rows[-1][0]
+
                 logging.info(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
                     """ROW: [ID, 'description', 'ubicacion', datetime.date[2024, 10, 17]]"""
                     logging.info(row)
 
-                    # analysis_result_forest = 
-                    # logging.info(f"Analysis Result: {analysis_result_forest}")
-                    # post_output(conn, analysis_result_forest, "IsolationForest")
-
                     # Analyze the row using the LLM
                     analysis_result_openai = analyze_row(llm, row)
-                    # analysis_result_openai = analyze_row(llm, analysis_result_forest)
                     logging.info(f"Analysis Result: {analysis_result_openai}")
 
                     # Post the analysis result to the database
                     post_output(conn, analysis_result_openai, "OpenAI")
 
                 # Update last_id to the ID of the most recent row
-                last_id = new_rows[-1][0]
-                write_last_id_to_db(cursor, conn, last_id)
+                last_Open_id = new_rows[-1][0]
+                write_last_id_to_db(cursor, conn, last_Open_id)
+                # write_last_id_to_db(cursor, conn, last_Open_id, last_IsolationForest_id)
             else:
                 logging.info("No new rows found.")
 
