@@ -80,19 +80,20 @@ def post_output(conn, response):
         logging.error(f"Error posting output to the database: {err}")
 
 
-def read_last_id(file_path):
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as f:
-            return int(f.read().strip())
-    return 0  # Default last_id if file does not exist
+def read_last_id_from_db(cursor):
+    query = "SELECT last_processed_id FROM LastId ORDER BY id DESC LIMIT 1"
+    cursor.execute(query)
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    return 0 
 
-def write_last_id(file_path, last_id):
-    with open(file_path, 'w') as f:
-        f.write(str(last_id))
+def write_last_id_to_db(cursor, conn, last_id):
+    query = "INSERT INTO LastId (last_processed_id) VALUES (%s)"
+    cursor.execute(query, (last_id,))
+    conn.commit()
 
 def main():
-    last_id_file = "last_id.txt"  # File to store the last processed ID
-    last_id = read_last_id(last_id_file)  # Read last processed ID from file
     llm = initialize_llm()
     conn = create_connection()
 
@@ -102,6 +103,9 @@ def main():
     cursor = conn.cursor()
 
     try:
+
+        last_id = read_last_id_from_db(cursor)
+
         while True:
             new_rows = check_new_rows(cursor, last_id)
 
@@ -119,7 +123,7 @@ def main():
 
                 # Update last_id to the ID of the most recent row and write to file
                 last_id = new_rows[-1][0]
-                write_last_id(last_id_file, last_id)
+                write_last_id_to_db(cursor, conn, last_id)
             else:
                 logging.info("No new rows found.")
 
