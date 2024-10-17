@@ -25,6 +25,7 @@ def main():
             if new_rows:
                 logging.info(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
+                    """ROW: [ID, 'description', 'ubicacion', datetime.date[2024, 10, 17]]"""
                     logging.info(row)
 
                     # analysis_result_forest = 
@@ -33,6 +34,7 @@ def main():
 
                     # Analyze the row using the LLM
                     analysis_result_openai = analyze_row(llm, row)
+                    # analysis_result_openai = analyze_row(llm, analysis_result_forest)
                     logging.info(f"Analysis Result: {analysis_result_openai}")
 
                     # Post the analysis result to the database
