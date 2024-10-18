@@ -32,7 +32,7 @@ def main():
                 for event in response:
                     if event['id'] > last_IsolationForest_id and event['suspicious']:
                         post_output(conn, event, "IsolationForest")
-                        last_IsolationForest_id = event['id']
+                last_IsolationForest_id = response[-1]['id']
                 
                 logging.info(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
