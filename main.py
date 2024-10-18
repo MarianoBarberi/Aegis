@@ -6,7 +6,7 @@ from dbConnect import create_connection, check_new_rows, post_output, read_last_
 from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=print, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def main():
     llm = initialize_llm()
@@ -26,22 +26,26 @@ def main():
 
             if new_rows:
                 df, X = cargar_y_preprocesar_logs('')
+                print('cargado y preprocesado')
                 model_if = entrenar_isolation_forest(X)
+                print('entrenado')
                 response = predecir_eventos(df, X, model_if)
+                print('predecido')
                 
                 for event in response:
                     if event['id'] > last_IsolationForest_id and event['suspicious']:
                         post_output(conn, event, "IsolationForest")
+                        print('evento sospechoso', event)
                 last_IsolationForest_id = response[-1]['id']
                 
-                logging.info(f"Found {len(new_rows)} new rows:")
+                print(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
                     """ROW: [ID, 'description', 'ubicacion', datetime.date[2024, 10, 17]]"""
-                    logging.info(row)
+                    print(row)
 
                     # Analyze the row using the LLM
                     analysis_result_openai = analyze_row(llm, row)
-                    logging.info(f"Analysis Result: {analysis_result_openai}")
+                    print(f"Analysis Result: {analysis_result_openai}")
 
                     # Post the analysis result to the database
                     post_output(conn, analysis_result_openai, "OpenAI")
@@ -51,18 +55,18 @@ def main():
                 # write_last_id_to_db(cursor, conn, last_Open_id)
                 write_last_id_to_db(cursor, conn, last_Open_id, last_IsolationForest_id)
             else:
-                logging.info("No new rows found.")
+                print("No new rows found.")
 
             time.sleep(10)  # Poll the database every 10 seconds
 
     except KeyboardInterrupt:
-        logging.info("Script terminated by user.")
+        print("Script terminated by user.")
     except mysql.connector.Error as err:
         logging.error(f"Database error: {err}")
     finally:
         cursor.close()
         conn.close()
-        logging.info("Database connection closed.")
+        print("Database connection closed.")
 
 if __name__ == "__main__":
     main()
