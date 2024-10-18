@@ -33,7 +33,7 @@ def main():
                 print('predecido')
                 
                 for event in response:
-                    if event['id'] > last_IsolationForest_id and event['suspicious']:
+                    if event['id'] > last_IsolationForest_id and event['sospechoso']:
                         post_output(conn, event, "IsolationForest")
                         print('evento sospechoso', event)
                 last_IsolationForest_id = response[-1]['id']
