@@ -45,9 +45,9 @@ def post_output(conn, response, table_name):
     except mysql.connector.Error as err:
         logging.error(f"Error posting output to the database: {err}")
 
-def read_last_id_from_db(cursor):
+def read_last_id_from_db(cursor, column):
     """Reads the last processed ID from the database."""
-    query = "SELECT last_processed_id FROM LastId ORDER BY id DESC LIMIT 1"
+    query = f"SELECT {column} FROM LastId ORDER BY id DESC LIMIT 1"
     cursor.execute(query)
     result = cursor.fetchone()
     if result:

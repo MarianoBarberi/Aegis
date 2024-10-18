@@ -18,21 +18,22 @@ def main():
     cursor = conn.cursor()
 
     try:
-        last_id = read_last_id_from_db(cursor)
+        last_Open_id = read_last_id_from_db(cursor, column="last_processed_id")
+        last_IsolationForest_id = read_last_id_from_db(cursor, column="last_IsolationForest_id")
 
         while True:
-            new_rows = check_new_rows(cursor, last_id, "Logs")
+            new_rows = check_new_rows(cursor, last_Open_id, "Logs")
 
             if new_rows:
-                # file_path = ''
-                # df, X = cargar_y_preprocesar_logs(file_path)
-                # model_if = entrenar_isolation_forest(X)
-                # response = predecir_eventos(df, X, model_if)
-                # algun for aqui para recorrer el response y postear los eventos sospechosos
-                    # if evento sospechoso y es mayor que el ultimo id guardado en la tabla LastId last_IsolationForest_id
-                        # post_output(conn, response, "IsolationForest")
-                        # last_IsolationForest_id = new_rows[-1][0]
-
+                df, X = cargar_y_preprocesar_logs('')
+                model_if = entrenar_isolation_forest(X)
+                response = predecir_eventos(df, X, model_if)
+                
+                for event in response:
+                    if event['id'] > last_IsolationForest_id and event['suspicious']:
+                        post_output(conn, event, "IsolationForest")
+                        last_IsolationForest_id = event['id']
+                
                 logging.info(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
                     """ROW: [ID, 'description', 'ubicacion', datetime.date[2024, 10, 17]]"""
@@ -47,8 +48,8 @@ def main():
 
                 # Update last_id to the ID of the most recent row
                 last_Open_id = new_rows[-1][0]
-                write_last_id_to_db(cursor, conn, last_Open_id)
-                # write_last_id_to_db(cursor, conn, last_Open_id, last_IsolationForest_id)
+                # write_last_id_to_db(cursor, conn, last_Open_id)
+                write_last_id_to_db(cursor, conn, last_Open_id, last_IsolationForest_id)
             else:
                 logging.info("No new rows found.")
 
