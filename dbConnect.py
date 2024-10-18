@@ -2,6 +2,7 @@ import mysql.connector
 import logging
 import os
 from dotenv import load_dotenv
+import pandas as pd
 
 # Load environment variables
 load_dotenv()
@@ -59,3 +60,10 @@ def write_last_id_to_db(cursor, conn, last_id):
     query = "INSERT INTO LastId (last_processed_id) VALUES (%s)"
     cursor.execute(query, (last_id,))
     conn.commit()
+
+def read_all_from_table(conn, cursor, table_name):
+    """Reads all rows from a specified table."""
+    query = f"SELECT * FROM {table_name}"
+    cursor.execute(query)
+    df = pd.read_sql(query, conn)
+    return df
