@@ -25,7 +25,7 @@ def main():
             new_rows = check_new_rows(cursor, last_Open_id, "Logs")
 
             if new_rows:
-                df, X = cargar_y_preprocesar_logs('')
+                df, X = cargar_y_preprocesar_logs(conn)
                 print('cargado y preprocesado')
                 model_if = entrenar_isolation_forest(X)
                 print('entrenado')
@@ -40,7 +40,7 @@ def main():
                 
                 print(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
-                    """ROW: [ID, 'description', 'ubicacion', datetime.date[2024, 10, 17]]"""
+                    """ROW: [id, 'description', 'ubicacion', datetime.date[2024, 10, 17]], 192.168.0.0"""
                     print(row)
 
                     # Analyze the row using the LLM
