@@ -1,12 +1,15 @@
 import pandas as pd
-import os
+import mysql.connector
 import time
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import IsolationForest
+from dbConnect import read_all_from_table
 
-def cargar_y_preprocesar_logs(file_path):
-    df = pd.read_csv(file_path)
 
+def cargar_y_preprocesar_logs(conexion):
+    cursor = conexion.cursor()
+    df = read_all_from_table(conexion, cursor, 'Logs')
+    cursor.close()
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     df['hora'] = df['timestamp'].dt.hour
     df['dia_semana'] = df['timestamp'].dt.weekday  
@@ -60,3 +63,4 @@ if __name__ == "__main__":
     model_if = entrenar_isolation_forest(X_inicial)
 
     ejecutar_modelo(model_if)
+
