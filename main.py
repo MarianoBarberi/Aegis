@@ -3,7 +3,7 @@ import logging
 import mysql.connector
 from OpenAI import initialize_llm, analyze_row
 from dbConnect import create_connection, check_new_rows, post_output, read_last_id_from_db, write_last_id_to_db
-from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos
+from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos, guardar_eventos_sospechosos
 
 # Configure logging
 logging.basicConfig(level=print, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -25,22 +25,22 @@ def main():
             new_rows = check_new_rows(cursor, last_Open_id, "Logs")
 
             if new_rows:
-                df, X = cargar_y_preprocesar_logs(conn)
+                df, X = cargar_y_preprocesar_logs(conn, last_IsolationForest_id)
                 print('cargado y preprocesado')
                 model_if = entrenar_isolation_forest(X)
                 print('entrenado')
                 response = predecir_eventos(df, X, model_if)
                 print('predecido')
-                
-                for event in response:
-                    if event['id'] > last_IsolationForest_id and event['sospechoso']:
-                        post_output(conn, event, "IsolationForest")
-                        print('evento sospechoso', event)
-                last_IsolationForest_id = response[-1]['id']
-                
+
+                # Guardar eventos sospechosos
+                if not response.empty:
+                    guardar_eventos_sospechosos(conn, response)
+                    print('Eventos sospechosos guardados')
+
+                last_IsolationForest_id = df['id'].max()
+
                 print(f"Found {len(new_rows)} new rows:")
                 for row in new_rows:
-                    """ROW: [id, 'description', 'ubicacion', datetime.date[2024, 10, 17]], 192.168.0.0"""
                     print(row)
 
                     # Analyze the row using the LLM
@@ -52,7 +52,6 @@ def main():
 
                 # Update last_id to the ID of the most recent row
                 last_Open_id = new_rows[-1][0]
-                # write_last_id_to_db(cursor, conn, last_Open_id)
                 write_last_id_to_db(cursor, conn, last_Open_id, last_IsolationForest_id)
             else:
                 print("No new rows found.")
@@ -70,3 +69,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
