@@ -31,11 +31,14 @@ def initialize_llm(api_key=None, model="gpt-3.5-turbo-instruct", max_tokens=1000
 
 def get_template():
     """Returns the template for the AI prompt."""
-    return """You are a cybersecurity risk analyst at a laboratory.
+    return """You are a cybersecurity risk analyst.
     You are tasked with analyzing the risks of the laboratory's infrastructure.
-    Input:
-    Analyze the risks of the laboratory's infrastructure and score the risks from 1 to 10, 
-    where 1 is the lowest risk and 5 is the highest risk.
+    Analyze the risks of the laboratory's infrastructure and score the risks from 1 to 5, 
+    Where 1 is the lowest risk and 5 is the highest risk.
+    Given the following context from a nist cibersecurity framweork, assess the risk.
+    
+    {context}
+
     The output should be only in this format and no other format is accepted:
     {{
         "risk_score": 3,
@@ -104,23 +107,7 @@ def create_vector_store():
 def create_rag_chain(llm):
     """Creates a RAG chain for analyzing data."""
     # Define the prompt template
-    prompt_template = """
-    You are a cybersecurity risk analyst.
-    You are tasked with analyzing the risks of the laboratory's infrastructure.
-    Analyze the risks of the laboratory's infrastructure and score the risks from 1 to 5, 
-    Where 1 is the lowest risk and 5 is the highest risk.
-    Given the following context from a nist cibersecurity framweork, assess the risk.
-    
-    {context}
-
-    The output should be only in this format and no other format is accepted:
-    {{
-        "risk_score": 3,
-        "risk_description": "The laboratory's network traffic is not encrypted.",
-        "risk_mitigation": "Encrypt the laboratory's network traffic.",
-        "risk_impact": "If the laboratory's network traffic is not encrypted, sensitive data can be intercepted."
-    }}
-    """
+    prompt_template = get_template()
     
     # Create a prompt object with the variable name 'document'
     prompt = ChatPromptTemplate.from_messages(
