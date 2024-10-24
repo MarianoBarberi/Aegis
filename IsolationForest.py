@@ -1,5 +1,4 @@
 import pandas as pd
-import mysql.connector
 import time
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import IsolationForest

@@ -1,7 +1,6 @@
 import time
 import logging
-import mysql.connector
-from OpenAI import initialize_llm, analyze_row
+from OpenAI import initialize_llm, analyze_row, create_rag_chain
 from dbConnect import create_connection, check_new_rows, post_output, read_last_id_from_db, write_last_id_to_db
 from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos
 
@@ -20,7 +19,7 @@ def main():
     try:
         last_Open_id = read_last_id_from_db(cursor, column="last_processed_id")
         last_IsolationForest_id = read_last_id_from_db(cursor, column="last_IsolationForest_id")
-
+        
         while True:
             new_rows = check_new_rows(cursor, last_Open_id, "Logs")
 
@@ -39,16 +38,17 @@ def main():
                 last_IsolationForest_id = response[-1]['id']
                 
                 print(f"Found {len(new_rows)} new rows:")
+                rag_chain = create_rag_chain(llm)
                 for row in new_rows:
                     """ROW: [id, 'description', 'ubicacion', datetime.date[2024, 10, 17]], 192.168.0.0"""
                     print(row)
 
                     # Analyze the row using the LLM
-                    analysis_result_openai = analyze_row(llm, row)
-                    print(f"Analysis Result: {analysis_result_openai}")
+                    analysis_result_openai = analyze_row(llm, row, rag_chain)
+                    print(analysis_result_openai["answer"])
 
                     # Post the analysis result to the database
-                    post_output(conn, analysis_result_openai, "OpenAI")
+                    post_output(conn, analysis_result_openai["answer"], "OpenAI")
 
                 # Update last_id to the ID of the most recent row
                 last_Open_id = new_rows[-1][0]
@@ -61,8 +61,6 @@ def main():
 
     except KeyboardInterrupt:
         print("Script terminated by user.")
-    except mysql.connector.Error as err:
-        logging.error(f"Database error: {err}")
     finally:
         cursor.close()
         conn.close()
