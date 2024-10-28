@@ -47,6 +47,7 @@ def get_template():
         "risk_impact": "If the laboratory's network traffic is not encrypted, sensitive data can be intercepted."
     }}
     """
+# reglas de negocio
 
 def analyze_row(llm, row, rag_chain):
     """Uses the language model to analyze a row of network traffic data."""

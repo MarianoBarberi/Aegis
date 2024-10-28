@@ -2,10 +2,12 @@ import time
 import logging
 from OpenAI import initialize_llm, analyze_row, create_rag_chain
 from dbConnect import create_connection, check_new_rows, post_output, read_last_id_from_db, write_last_id_to_db
-from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, predecir_eventos, guardar_eventos_sospechosos
+from IsolationForest import cargar_y_preprocesar_logs, entrenar_isolation_forest, ejecutar_modelo
+import warnings
 
 # Configure logging
 logging.basicConfig(level=print, format='%(asctime)s - %(levelname)s - %(message)s')
+warnings.filterwarnings("ignore", message="pandas only supports SQLAlchemy connectable")
 
 def main():
     llm = initialize_llm()
@@ -24,23 +26,19 @@ def main():
             new_rows = check_new_rows(cursor, last_Open_id, "Logs")
 
             if new_rows:
-                df, X = cargar_y_preprocesar_logs(conn, last_IsolationForest_id)
-                print('cargado y preprocesado')
-                model_if = entrenar_isolation_forest(X)
-                print('entrenado')
-                response = predecir_eventos(df, X, model_if)
-                print('predecido')
-
-                # Guardar eventos sospechosos
-                if not response.empty:
-                    guardar_eventos_sospechosos(conn, response)
-                    print('Eventos sospechosos guardados')
-
-                last_IsolationForest_id = df['id'].max()
-
                 print(f"Found {len(new_rows)} new rows:")
-                rag_chain = create_rag_chain(llm)
+                df_inicial, X_inicial, last_IsolationForest_id = cargar_y_preprocesar_logs(conn, last_log_id=0)
+                print('cargado y preprocesado')
+                model_if = entrenar_isolation_forest(X_inicial)
+                print('entrenado')
                 for row in new_rows:
+                    print(row)
+                    ejecutar_modelo(model_if, conn)
+                    print('predecido')
+
+                rag_chain = create_rag_chain(llm)
+                new_rows2 = check_new_rows(cursor, last_Open_id, "IsolationForest")
+                for row in new_rows2:
                     print(row)
 
                     # Analyze the row using the LLM

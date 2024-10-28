@@ -82,22 +82,20 @@ def predecir_eventos(df, X, model_if):
     eventos_sospechosos = df[df['sospechoso'] == 1]
     return eventos_sospechosos
 
-def ejecutar_modelo(model_if):
-    conexion = obtener_conexion()
+def ejecutar_modelo(model_if, conexion):
     last_log_id = 0
 
-    while True:
-        df, X, last_log_id = cargar_y_preprocesar_logs(conexion, last_log_id)
+    df, X, last_log_id = cargar_y_preprocesar_logs(conexion, last_log_id)
 
-        if df is not None:
-            eventos_sospechosos = predecir_eventos(df, X, model_if)
-            if not eventos_sospechosos.empty:
-                guardar_eventos_sospechosos(conexion, eventos_sospechosos)
+    if df is not None:
+        eventos_sospechosos = predecir_eventos(df, X, model_if)
+        if not eventos_sospechosos.empty:
+            guardar_eventos_sospechosos(conexion, eventos_sospechosos)
 
 if __name__ == "__main__":
     conexion = obtener_conexion()
     df_inicial, X_inicial, last_log_id = cargar_y_preprocesar_logs(conexion, last_log_id=0)
     model_if = entrenar_isolation_forest(X_inicial)
-    ejecutar_modelo(model_if)
+    ejecutar_modelo(model_if, conexion)
     conexion.close()
 
