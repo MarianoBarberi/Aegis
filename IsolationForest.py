@@ -1,5 +1,4 @@
 import pandas as pd
-import time
 import mysql.connector
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.ensemble import IsolationForest
@@ -13,6 +12,13 @@ def obtener_conexion():
     )
     return conexion
 
+def log_repetido(conexion, log_id):
+    query = f"SELECT COUNT(1) FROM IsolationForest WHERE id = {log_id}"
+    cursor = conexion.cursor()
+    cursor.execute(query)
+    result = cursor.fetchone()
+    return result[0] > 0
+
 def obtener_logs(conexion, last_log_id):
     query = f"""
     SELECT *
@@ -25,6 +31,8 @@ def obtener_logs(conexion, last_log_id):
 def guardar_eventos_sospechosos(conexion, df):
     cursor = conexion.cursor()
     for _, row in df.iterrows():
+        if log_repetido(conexion, row['id']):
+            continue
         fecha_mysql = row['fecha'].strftime('%Y-%m-%d %H:%M:%S')
         
         insert_query = """
@@ -33,8 +41,6 @@ def guardar_eventos_sospechosos(conexion, df):
         """
         cursor.execute(insert_query, (row['id'], row['descripcion'], fecha_mysql, row['ip_origen'], row['ip_destino'], row['puerto'], row['ubicacion'], row['data_size']))
     conexion.commit()
-
-
 
 def cargar_y_preprocesar_logs(conexion, last_log_id):
     df = obtener_logs(conexion, last_log_id)
@@ -94,5 +100,4 @@ if __name__ == "__main__":
     model_if = entrenar_isolation_forest(X_inicial)
     ejecutar_modelo(model_if)
     conexion.close()
-
 
