@@ -7,7 +7,7 @@
 ## AI
 ```bash
 pip install -r requirements.txt
-streamlit run main.py
+python main.py
 ```
 
 ## Frontend (/hymperion)
