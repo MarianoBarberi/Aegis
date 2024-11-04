@@ -52,9 +52,6 @@ def cargar_y_preprocesar_logs(conexion, last_log_id):
     df['hora'] = df['fecha'].dt.hour
     df['dia_semana'] = df['fecha'].dt.weekday  
 
-    le_ip_privada = LabelEncoder()
-    df['ip_privada_encoded'] = le_ip_privada.fit_transform(df['ip_privada'])
-
     le_ip_origen = LabelEncoder()
     df['ip_origen_encoded'] = le_ip_origen.fit_transform(df['ip_origen'])
 
@@ -64,10 +61,9 @@ def cargar_y_preprocesar_logs(conexion, last_log_id):
     le_ubicacion = LabelEncoder()
     df['ubicacion_encoded'] = le_ubicacion.fit_transform(df['ubicacion'])
 
+    X = df[['ip_origen_encoded', 'ip_destino_encoded', 'ubicacion_encoded', 'puerto', 'data_size', 'hora', 'dia_semana']].copy()
     scaler = StandardScaler()
-    df[['puerto', 'data_size', 'hora', 'dia_semana']] = scaler.fit_transform(df[['puerto', 'data_size', 'hora', 'dia_semana']])
-
-    X = df[['ip_privada_encoded', 'ip_origen_encoded', 'ip_destino_encoded', 'ubicacion_encoded', 'puerto', 'data_size', 'hora', 'dia_semana']]
+    X[['puerto', 'data_size', 'hora', 'dia_semana']] = scaler.fit_transform(X[['puerto', 'data_size', 'hora', 'dia_semana']])
 
     return df, X, df['id'].max()
 
