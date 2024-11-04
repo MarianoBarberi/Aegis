@@ -56,7 +56,7 @@ def main():
                         analysis_result_openai['answer'] = "Error: No match found."
 
                     # Post the analysis result to the database
-                    post_output(conn, analysis_result_openai["answer"], row[6], row[2] ,"OpenAI")
+                    post_output(conn, analysis_result_openai["answer"], row[6], row[2] ,"OpenAI", idIsoFo=row[0])
 
                 # Update last_id to the ID of the most recent row
                 last_Open_id = new_rows2[-1][0]

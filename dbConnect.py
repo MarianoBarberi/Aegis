@@ -30,12 +30,12 @@ def check_new_rows(cursor, last_id, table_name):
     cursor.execute(query, (last_id,))
     return cursor.fetchall()
 
-def post_output(conn, response, ubicacion, fecha, table_name):
+def post_output(conn, response, ubicacion, fecha, table_name, idIsoFo):
     """Posts the analysis result to the database."""
     try:
         cursor = conn.cursor()
-        query = f"INSERT INTO {table_name} (descripcion, ubicacion, fecha) VALUES (%s, %s, %s)"
-        cursor.execute(query, (str(response), ubicacion, fecha))
+        query = f"INSERT INTO {table_name} (descripcion, ubicacion, fecha, idIsoFo) VALUES (%s, %s, %s, %s)"
+        cursor.execute(query, (str(response), ubicacion, fecha, idIsoFo))
         conn.commit()
         cursor.close()
         logging.info("Output successfully posted to the database.")

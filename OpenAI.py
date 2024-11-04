@@ -36,15 +36,16 @@ def get_template():
     Analyze the risks of the laboratory's infrastructure and score the risks from 1 to 5, 
     Where 1 is the lowest risk and 5 is the highest risk.
     Given the following context from a nist cibersecurity framweork, assess the risk.
+    The location in question is {location}, and "sede central" is a higher risk area compared to "sede 1", "sede 2", or "sede 3", this should influence the risk_score.
     
     {context}
 
-    The output should be only in this format and no other format is accepted:
+    The output should be only in english and using this format and no other format is accepted:
     {{
-        "risk_score": 3,
-        "risk_description": "The laboratory's network traffic is not encrypted.",
-        "risk_mitigation": "Encrypt the laboratory's network traffic.",
-        "risk_impact": "If the laboratory's network traffic is not encrypted, sensitive data can be intercepted."
+        "risk_score": 1,
+        "risk_description": "There was a failed login attempt.",
+        "risk_mitigation": "Implement multi-factor authentication and monitor login attempts.",
+        "risk_impact": "Failed login attempts could indicate a potential brute force attack, compromising the system's security."
     }}
     """
 # reglas de negocio
@@ -58,7 +59,7 @@ def analyze_row(llm, row, rag_chain):
     input_data = row[1]
     
     # response = llm.invoke(prompt)
-    response = rag_chain.invoke({"input": input_data})
+    response = rag_chain.invoke({"input": input_data, "location": row[6]})
 
     return response
 
@@ -114,9 +115,9 @@ def create_rag_chain(llm):
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", prompt_template),
-            ("human", "{input}"),
+            ("human", "{input}, in {location}"),
         ]
-    )
+        )
 
     retriever = create_vector_store()
 
@@ -130,7 +131,7 @@ def create_rag_chain(llm):
 def main():
 
     # Example row of network traffic data
-    row = [1, "Network scanning activity detected from 192.168.1.101 on multiple ports", "sede 1", "2024-10-17"]
+    row = [1, "Acceso a archivo confidencial", "2023-10-01 12:34:56", 0, 0, 74, 'sede central', 400]
 
     llm = initialize_llm()
     
@@ -139,6 +140,8 @@ def main():
     response = analyze_row(llm, row, rag_chain)
 
     print(response["answer"])
+    print('')
+    # print(response)
 
 if __name__ == "__main__":
     main()
