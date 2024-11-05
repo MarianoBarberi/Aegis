@@ -10,10 +10,16 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Frontend - /hymperion
+## Frontend - /hymperion/app
 ```bash
 npm install
 npm run dev
+```
+
+## Backend - /hymperion/backend
+```bash
+python install -r requirements.txt
+python app.py
 ```
 
 ## Trial de chatGPT - /ChatGPT
