@@ -2,16 +2,16 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Home, Flask, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Home, Menu, X, ChevronLeft, ChevronRight, Hospital, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const menuItems = [
   { name: 'Home', icon: Home, href: '/dashboard' },
-  { name: 'Central', icon: Flask, href: '/dashboard/sede%20central' },
-  { name: 'Laboratorio 1', icon: Flask, href: '/dashboard/sede%201' },
-  { name: 'Laboratorio 2', icon: Flask, href: '/dashboard/sede%202' },
-  { name: 'Laboratorio 3', icon: Flask, href: '/dashboard/sede%203' },
-  { name: 'Logout', icon: Flask, href: '/api/auth/logout' },
+  { name: 'Central', icon: Hospital, href: '/dashboard/sede%20central' },
+  { name: 'Laboratorio 1', icon: Hospital, href: '/dashboard/sede%201' },
+  { name: 'Laboratorio 2', icon: Hospital, href: '/dashboard/sede%202' },
+  { name: 'Laboratorio 3', icon: Hospital, href: '/dashboard/sede%203' },
+  { name: 'Logout', icon: LogOut, href: '/api/auth/logout' },
 ]
 
 const menuItemVariants = {
