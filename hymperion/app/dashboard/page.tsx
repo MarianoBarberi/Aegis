@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from "framer-motion"
+import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
 import Menu from '@/app/components/side-menu' 
 import Char from '@/app/components/char' 
 import Alerts from '@/app/components/network-alerts'
@@ -12,14 +13,14 @@ const variants = {
   closed: { opacity: 0, x: "-100%" },
 }
 
-export default function Page() {
+function Dashboard() {
   const [isMenuVisible] = useState(true)
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Menú lateral  */}
       <motion.div 
-        className=" bg-white shadow-md"
+        className="bg-white shadow-md"
         animate={isMenuVisible ? "open" : "closed"}
         variants={variants}
         initial="closed"
@@ -52,3 +53,9 @@ export default function Page() {
     </div>
   )
 }
+
+export default withPageAuthRequired(Dashboard, {
+  returnTo: '/dashboard',
+  onRedirecting: () => <div>Loading...</div>,
+  onError: error => <div>Error: {error.message}</div>
+})
