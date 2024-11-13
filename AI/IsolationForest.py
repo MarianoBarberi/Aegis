@@ -39,7 +39,15 @@ def guardar_eventos_sospechosos(conexion, df):
         INSERT INTO IsolationForest (id, descripcion, fecha, ip_origen, ip_destino, puerto, ubicacion, data_size)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        
+        if 'sede 1' in row['ubicacion']:
+            row['ubicacion'] = 'sede 1'
+        elif 'sede 2' in row['ubicacion']:
+            row['ubicacion'] = 'sede 2'
+        elif 'sede 3' in row['ubicacion']:
+            row['ubicacion'] = 'sede 3'
+        else:
+            row['ubicacion'] = 'sede central'
+
         cursor.execute(insert_query, (row['id'], row['descripcion'], fecha_mysql, row['ip_origen'], row['ip_destino'], row['puerto'], row['ubicacion'], row['data_size']))
     conexion.commit()
 
