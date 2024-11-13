@@ -10,7 +10,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Frontend - /hymperion/app
+## Frontend - /hymperion
 ```bash
 npm install
 npm run dev
