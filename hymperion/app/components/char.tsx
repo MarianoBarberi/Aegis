@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 interface RiskData {
@@ -23,7 +23,6 @@ const UPDATE_INTERVAL = 60000 // 1 minute
 
 export default function RiskDistributionChart() {
   const [riskData, setRiskData] = useState<RiskData[]>([])
-  const [chartData, setChartData] = useState<{ name: string; value: number }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null)
@@ -39,7 +38,6 @@ export default function RiskDistributionChart() {
       }
       const data: RiskData[] = await response.json()
       setRiskData(data)
-      processChartData(data)
       setLastUpdateTime(new Date())
       setError(null)
     } catch (err) {
@@ -52,13 +50,12 @@ export default function RiskDistributionChart() {
   }, [])
 
   // Process data for chart
-  const processChartData = (data: RiskData[]) => {
-    const riskCounts = RISK_LEVELS.map(level => ({
+  const chartData = useMemo(() => {
+    return RISK_LEVELS.map(level => ({
       name: level.name,
-      value: data.filter(risk => risk.risk_score === level.value).length
+      value: riskData.filter(risk => risk.risk_score === level.value).length
     }))
-    setChartData(riskCounts)
-  }
+  }, [riskData])
 
   useEffect(() => {
     fetchRiskData()

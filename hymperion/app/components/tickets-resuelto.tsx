@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { AlertCircle, ShieldAlert, X, RefreshCw, Filter, Calendar, MapPin, RotateCcw, CheckCircle } from "lucide-react"
 
 interface RiskData {
@@ -22,7 +22,6 @@ type StatusFilter = 'All' | 'Resolved' | 'Pending'
 export default function NetworkAlerts() {
   const router = useRouter()
   const [riskData, setRiskData] = useState<RiskData[]>([])
-  const [filteredRiskData, setFilteredRiskData] = useState<RiskData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [riskLevel, setRiskLevel] = useState<RiskLevel>('All')
@@ -56,11 +55,7 @@ export default function NetworkAlerts() {
     return () => clearInterval(intervalId) // Cleanup on component unmount
   }, [fetchRiskData])
 
-  useEffect(() => {
-    filterRiskData()
-  }, [riskLevel, startDate, endDate, riskData])
-
-  const filterRiskData = useCallback(() => {
+  const filteredRiskData = useMemo(() => {
     let filtered = riskData
     if (riskLevel !== 'All') {
       filtered = filtered.filter((risk) => risk.risk_score === parseInt(riskLevel))
@@ -71,7 +66,7 @@ export default function NetworkAlerts() {
         return riskDate >= new Date(startDate) && riskDate <= new Date(endDate)
       })
     }
-    setFilteredRiskData(filtered)
+    return filtered
   }, [riskData, riskLevel, startDate, endDate])
 
   const resetFilters = () => {
