@@ -60,7 +60,7 @@ export default function Home() {
               </Link>
             ) : (
               <Link href="/api/auth/login">
-                Iniciar sesión con Auth0
+                Iniciar sesión
               </Link>
             )}
           </motion.button>
