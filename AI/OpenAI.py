@@ -10,6 +10,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -61,7 +62,15 @@ def analyze_row(llm, row, rag_chain):
     # response = llm.invoke(prompt)
     response = rag_chain.invoke({"input": input_data, "location": row[6]})
 
-    return response
+    
+    data = json.loads(response['answer'])
+    # Assign values to variables
+    risk_score = data["risk_score"]
+    risk_description = data["risk_description"]
+    risk_mitigation = data["risk_mitigation"]
+    risk_impact = data["risk_impact"]
+
+    return response, risk_score, risk_description, risk_mitigation, risk_impact
 
 
 def create_vector_store():
@@ -137,9 +146,13 @@ def main():
     
     rag_chain = create_rag_chain(llm)
 
-    response = analyze_row(llm, row, rag_chain)
+    response, risk_score, risk_description, risk_mitigation, risk_impact = analyze_row(llm, row, rag_chain)
 
     print(response["answer"])
+    print("Risk Score:", risk_score)
+    print("Risk Description:", risk_description)
+    print("Risk Mitigation:", risk_mitigation)
+    print("Risk Impact:", risk_impact)
     print('')
     # print(response)
 

@@ -45,7 +45,7 @@ def main():
                     print(row)
 
                     # Analyze the row using the LLM
-                    analysis_result_openai = analyze_row(llm, row, rag_chain)
+                    analysis_result_openai, risk_score, risk_description, risk_mitigation, risk_impact = analyze_row(llm, row, rag_chain)
                     
                     print(analysis_result_openai["answer"])
 
@@ -56,7 +56,7 @@ def main():
                         analysis_result_openai['answer'] = "Error: No match found."
 
                     # Post the analysis result to the database
-                    post_output(conn, analysis_result_openai["answer"], row[6], row[2] ,"OpenAI", idIsoFo=row[0])
+                    post_output(conn, analysis_result_openai["answer"], risk_score, risk_description, risk_mitigation, risk_impact, row[6], row[2] ,"OpenAI", idIsoFo=row[0])
 
                 # Update last_id to the ID of the most recent row
                 last_Open_id = new_rows2[-1][0]
