@@ -71,7 +71,6 @@ export default function RiskDistributionChart() {
   }
 
   return (
-    <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="p-6">
         {error ? (
           <div className="text-center text-red-500 mb-4">{error}</div>
@@ -112,6 +111,5 @@ export default function RiskDistributionChart() {
           </div>
         )}
       </div>
-    </div>
   )
 }

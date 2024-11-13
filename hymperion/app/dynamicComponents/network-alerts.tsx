@@ -14,6 +14,7 @@ interface RiskData {
   fecha: string
   ubicacion: string
   estado: string 
+  evento: string
 }
 
 type RiskLevel = 'All' | '1' | '2' | '3' | '4' | '5'
@@ -168,7 +169,7 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
     <div className="w-full h-full max-h-full bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
       <div className="p-4 bg-gray-50 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Tickets for {decodedSede}</h2>
+          <h2 className="text-xl font-bold text-gray-800">Events of {decodedSede}</h2>
           {lastUpdated && (
             <p className="text-sm text-gray-600">
               Last updated: {lastUpdated.toLocaleTimeString()}
@@ -218,7 +219,7 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
             onClick={handleRedirect}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
-            Resueltos
+            Resolved
           </button>
         </div>
       </div>
@@ -245,7 +246,7 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
                     <span>{risk.fecha ? new Date(risk.fecha).toLocaleString() : 'Date unknown'}</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-700 mb-2">{risk.risk_description}</p>
+                <p className="text-sm text-gray-700 mb-2">{risk.evento}</p>
                 <div className="flex items-center space-x-1 text-sm text-gray-500">
                   <MapPin className="h-4 w-4" />
                   <span>{risk.ubicacion || 'Location unknown'}</span>

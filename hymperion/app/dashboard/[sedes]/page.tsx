@@ -6,6 +6,7 @@ import Menu  from '@/app/components/side-menu'
 import { motion } from "framer-motion";
 import { useState } from 'react'
 import { withPageAuthRequired } from '@auth0/nextjs-auth0/client'
+import Image from 'next/image'
 
 const validLocations = ['sede%20central', 'sede%201', 'sede%202', 'sede%203']
 
@@ -40,8 +41,8 @@ function DynamicLocationPage({ params }: { params: { sedes: string } }) {
             <div className="min-h-full p-4 space-y-4">
               <div className="flex space-x-4">
                 {/* Imagen principal */}
-                <div className="w-1/4 bg-white shadow-md rounded-lg flex items-center justify-center p-4">
-                  <img src="/placeholder.svg?height=150&width=150" alt="Placeholder" className="max-w-full h-auto" />
+                <div className="w-1/4 bg-black shadow-md rounded-lg flex items-center justify-center p-4">
+                  <Image src="/images/logo2.png" alt="Logo" className="max-w-full h-auto" width={180} height={180}/>
                 </div>
     
                 {/* Gráfica de pastel */}

@@ -1,2 +1,4 @@
 ChatGPT/.env
+AI/.env
 .env
+AI/__pycache__/

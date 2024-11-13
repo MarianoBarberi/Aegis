@@ -21,102 +21,92 @@ def index():
 @app.route('/tickets/pendientes', methods=['GET'])
 def obtener_tickets_pendientes():
     try:
-        cursor = mysql.connection.cursor()
-        query = "SELECT id, descripcion, ubicacion, fecha, status FROM OpenAI WHERE status = 'pendiente'"
-        cursor.execute(query)
-        result = cursor.fetchall()
-        cursor.close()
+        # Use a context manager for cursor, which ensures immediate cleanup
+        with mysql.connection.cursor() as cursor:
+            cursor.execute("CALL GetPendingEvents()")
+            # Retrieve results in a single call for efficiency
+            result = cursor.fetchall()
 
-        formatted_results = []
-        for row in result:
-            try:
-                # Parseamos la descripción que contiene los datos JSON
-                risk_data = json.loads(row[1])  
-                formatted_result = {
-                    "id": row[0],  
-                    "risk_score": risk_data.get("risk_score"),
-                    "risk_description": risk_data.get("risk_description"),
-                    "risk_mitigation": risk_data.get("risk_mitigation"),
-                    "risk_impact": risk_data.get("risk_impact"),
-                    "ubicacion": row[2],
-                    "fecha": row[3],
-                    "status": row[4]
-                }
-                formatted_results.append(formatted_result)
-            except json.JSONDecodeError as e:
-                print(f"Error al decodificar JSON: {e} en la fila: {row[1]}")
-        
+        # Process rows directly into a list of dictionaries
+        formatted_results = [
+            {
+                "id": row[0],  
+                "risk_score": row[1],
+                "risk_description": row[2],
+                "risk_mitigation": row[3],
+                "risk_impact": row[4],
+                "status": row[5],
+                "evento": row[6],
+                "fecha": row[7],
+                "ubicacion": row[8],
+                "puerto": row[9]
+            } for row in result
+        ]
+
         return jsonify(formatted_results)
     
     except Exception as e:
         print(f"Error en la consulta de la base de datos: {e}")
         return jsonify({"error": "Error al obtener los datos de la base de datos"}), 500
-
 
 @app.route('/tickets/resueltos', methods=['GET'])
 def obtener_tickets_resueltos():
     try:
-        cursor = mysql.connection.cursor()
-        query = "SELECT id, descripcion, ubicacion, fecha, status FROM OpenAI WHERE status = 'resuelto'"
-        cursor.execute(query)
-        result = cursor.fetchall()
-        cursor.close()
+        # Using a context manager for the cursor to ensure it closes immediately after use
+        with mysql.connection.cursor() as cursor:
+            cursor.execute("CALL GetResolvedEvents()")
+            result = cursor.fetchall()
 
-        formatted_results = []
-        for row in result:
-            try:
-                risk_data = json.loads(row[1])  
-                formatted_result = {
-                    "id": row[0],  
-                    "risk_score": risk_data.get("risk_score"),
-                    "risk_description": risk_data.get("risk_description"),
-                    "risk_mitigation": risk_data.get("risk_mitigation"),
-                    "risk_impact": risk_data.get("risk_impact"),
-                    "ubicacion": row[2],
-                    "fecha": row[3],
-                    "status": row[4]
-                }
-                formatted_results.append(formatted_result)
-            except json.JSONDecodeError as e:
-                print(f"Error al decodificar JSON: {e} en la fila: {row[0]}")
-        
+        # Process each row into a dictionary using list comprehension
+        formatted_results = [
+            {
+                "id": row[0],                # id
+                "risk_score": row[1],         # risk_score
+                "risk_description": row[2],   # risk_description
+                "risk_mitigation": row[3],    # risk_mitigation
+                "risk_impact": row[4],        # risk_impact
+                "status": row[5],             # status
+                "evento": row[6],             # evento
+                "fecha": row[7],              # fecha
+                "ubicacion": row[8],          # ubicacion
+                "puerto": row[9]              # puerto
+            } for row in result
+        ]
+
         return jsonify(formatted_results)
-    
+
     except Exception as e:
         print(f"Error en la consulta de la base de datos: {e}")
         return jsonify({"error": "Error al obtener los datos de la base de datos"}), 500
 
-# tickets dinamicos por sede pendientes
 @app.route('/tickets/pendientes/<string:sede>', methods=['GET'])
 def obtener_tickets_pendientes_por_sede(sede):
     try:
-        cursor = mysql.connection.cursor()
-        # Filtrar por ubicación (sede) y estado resuelto
-        query = "SELECT id, descripcion, ubicacion, fecha, status FROM OpenAI WHERE ubicacion = %s AND status = 'pendiente'"
-        cursor.execute(query, (sede,))
-        result = cursor.fetchall()
-        cursor.close()
+        # Use a context manager to ensure the cursor closes immediately after use
+        with mysql.connection.cursor() as cursor:
+            # Call the stored procedure with the location (sede) parameter
+            query = "CALL GetPendingEventsByUbi(%s)"
+            cursor.execute(query, (sede,))
+            result = cursor.fetchall()
 
-        formatted_results = []
-        for row in result:
-            try:
-                risk_data = json.loads(row[1])  
-                formatted_result = {
-                    "id": row[0],  
-                    "risk_score": risk_data.get("risk_score"),
-                    "risk_description": risk_data.get("risk_description"),
-                    "risk_mitigation": risk_data.get("risk_mitigation"),
-                    "risk_impact": risk_data.get("risk_impact"),
-                    "ubicacion": row[2],
-                    "fecha": row[3],
-                    "status": row[4]
-                }
-                formatted_results.append(formatted_result)
-            except json.JSONDecodeError as e:
-                print(f"Error al decodificar JSON: {e} en la fila: {row[0]}")
-        
+        # Convert each row into a dictionary using list comprehension
+        formatted_results = [
+            {
+                "id": row[0],                # id
+                "risk_score": row[1],         # risk_score
+                "risk_description": row[2],   # risk_description
+                "risk_mitigation": row[3],    # risk_mitigation
+                "risk_impact": row[4],        # risk_impact
+                "status": row[5],             # status
+                "evento": row[6],             # evento
+                "fecha": row[7],              # fecha
+                "ubicacion": row[8],          # ubicacion
+                "puerto": row[9]              # puerto
+            } for row in result
+        ]
+
         return jsonify(formatted_results)
-    
+
     except Exception as e:
         print(f"Error en la consulta de la base de datos: {e}")
         return jsonify({"error": "Error al obtener los datos de la base de datos"}), 500
@@ -126,30 +116,28 @@ def obtener_tickets_pendientes_por_sede(sede):
 @app.route('/tickets/resueltos/<string:sede>', methods=['GET'])
 def obtener_tickets_resueltos_por_sede(sede):
     try:
-        cursor = mysql.connection.cursor()
-        # Filtrar por ubicación (sede) y estado resuelto
-        query = "SELECT id, descripcion, ubicacion, fecha, status FROM OpenAI WHERE ubicacion = %s AND status = 'resuelto'"
-        cursor.execute(query, (sede,))
-        result = cursor.fetchall()
-        cursor.close()
+        # Use a context manager to ensure the cursor closes immediately after use
+        with mysql.connection.cursor() as cursor:
+            # Call the stored procedure with the location (sede) parameter
+            query = "CALL GetResolvedEventsByUbi(%s)"
+            cursor.execute(query, (sede,))
+            result = cursor.fetchall()
 
-        formatted_results = []
-        for row in result:
-            try:
-                risk_data = json.loads(row[1])  
-                formatted_result = {
-                    "id": row[0],  
-                    "risk_score": risk_data.get("risk_score"),
-                    "risk_description": risk_data.get("risk_description"),
-                    "risk_mitigation": risk_data.get("risk_mitigation"),
-                    "risk_impact": risk_data.get("risk_impact"),
-                    "ubicacion": row[2],
-                    "fecha": row[3],
-                    "status": row[4]
-                }
-                formatted_results.append(formatted_result)
-            except json.JSONDecodeError as e:
-                print(f"Error al decodificar JSON: {e} en la fila: {row[0]}")
+        # Convert each row into a dictionary using list comprehension
+        formatted_results = [
+            {
+                "id": row[0],                # id
+                "risk_score": row[1],         # risk_score
+                "risk_description": row[2],   # risk_description
+                "risk_mitigation": row[3],    # risk_mitigation
+                "risk_impact": row[4],        # risk_impact
+                "status": row[5],             # status
+                "evento": row[6],             # evento
+                "fecha": row[7],              # fecha
+                "ubicacion": row[8],          # ubicacion
+                "puerto": row[9]              # puerto
+            } for row in result
+        ]
         
         return jsonify(formatted_results)
     
@@ -162,7 +150,7 @@ def obtener_tickets_resueltos_por_sede(sede):
 def eliminar_ticket(id):
     try:
         cursor = mysql.connection.cursor()
-        query = "DELETE FROM OpenAI WHERE id = %s"
+        query = "CALL DeleteFromOpenAI(%s)"
         cursor.execute(query, (id,))
         mysql.connection.commit()
         cursor.close()
@@ -178,7 +166,7 @@ def eliminar_ticket(id):
 def marcar_ticket_resuelto(id):
     try:
         cursor = mysql.connection.cursor()
-        query = "UPDATE OpenAI SET status = 'Resuelto' WHERE id = %s"
+        query = "CALL SetStatusResuelto(%s)"
         cursor.execute(query, (id,))
         mysql.connection.commit()
         cursor.close()
@@ -194,7 +182,7 @@ def marcar_ticket_resuelto(id):
 def marcar_ticket_pendiente(id):
     try:
         cursor = mysql.connection.cursor()
-        query = "UPDATE OpenAI SET status = 'pendiente' WHERE id = %s"
+        query = "CALL SetStatusPendiente(%s)"
         cursor.execute(query, (id,))
         mysql.connection.commit()
         cursor.close()
