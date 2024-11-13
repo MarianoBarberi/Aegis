@@ -63,7 +63,7 @@ export default function AegisLandingPage() {
             </motion.p>
             <motion.div variants={itemVariants}>
               <button className={`text-white font-bold py-2 px-4 rounded ${
-              user ? 'bg-green-500 hover:bg-green-700' : 'bg-blue-500 hover:bg-blue-700'
+              user ? 'bg-blue-500 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-700'
             }`}
           >
             {user ? (
