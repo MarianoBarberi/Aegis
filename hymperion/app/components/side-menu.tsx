@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Home, Menu, X, ChevronLeft, ChevronRight, Hospital, LogOut } from 'lucide-react'
+import { Home, Menu, X, ChevronLeft, ChevronRight, Hospital, Building, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const menuItems = [
   { name: 'Home', icon: Home, href: '/dashboard' },
-  { name: 'Central', icon: Hospital, href: '/dashboard/sede%20central' },
+  { name: 'Central', icon: Building, href: '/dashboard/sede%20central' },
   { name: 'Laboratorio 1', icon: Hospital, href: '/dashboard/sede%201' },
   { name: 'Laboratorio 2', icon: Hospital, href: '/dashboard/sede%202' },
   { name: 'Laboratorio 3', icon: Hospital, href: '/dashboard/sede%203' },
@@ -64,8 +64,13 @@ export default function Sidebar() {
                   transition={{ delay: index * 0.1 }}
                 >
                   <Link href={item.href} className="flex items-center space-x-3 text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="relative">
                       {item.icon && <item.icon size={20} />}
+                      {item.icon === Hospital && (
+                      <span className="absolute bottom-0 right-0 translate-x-1 translate-y-1 text-xs bg-black text-white rounded-full w-3.5 h-3.5 flex items-center justify-center">
+                        {index - 1}
+                      </span>
+                      )}
                     </motion.div>
                     {isExpanded && <span>{item.name}</span>}
                   </Link>
