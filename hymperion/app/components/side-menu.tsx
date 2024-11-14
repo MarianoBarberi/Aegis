@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 const menuItems = [
   { name: 'Home', icon: Home, href: '/dashboard' },
   { name: 'Central', icon: Building, href: '/dashboard/sede%20central' },
-  { name: 'Laboratorio 1', icon: Hospital, href: '/dashboard/sede%201' },
-  { name: 'Laboratorio 2', icon: Hospital, href: '/dashboard/sede%202' },
-  { name: 'Laboratorio 3', icon: Hospital, href: '/dashboard/sede%203' },
+  { name: 'Lab 1', icon: Hospital, href: '/dashboard/sede%201' },
+  { name: 'Lab 2', icon: Hospital, href: '/dashboard/sede%202' },
+  { name: 'Lab 3', icon: Hospital, href: '/dashboard/sede%203' },
   { name: 'Logout', icon: LogOut, href: '/api/auth/logout' },
 ]
 
@@ -20,7 +20,7 @@ const menuItemVariants = {
 }
 
 const sidebarVariants = {
-  expanded: { width: '240px' },
+  expanded: { width: '185px' },
   collapsed: { width: '64px' },
 }
 

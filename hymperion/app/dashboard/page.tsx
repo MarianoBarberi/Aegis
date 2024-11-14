@@ -34,7 +34,7 @@ function Dashboard() {
         <div className="min-h-full p-4 space-y-4">
           <div className="flex space-x-4">
             {/* Imagen principal */}
-            <div className="w-1/4 bg-black shadow-md rounded-lg flex items-center justify-center p-4">
+            <div className="w-1/4 bg-white shadow-md rounded-lg flex items-center justify-center p-4">
               <Image src="/images/logo2.png" alt="Logo" className="max-w-full h-auto" width={180} height={180}/>
             </div>
 
