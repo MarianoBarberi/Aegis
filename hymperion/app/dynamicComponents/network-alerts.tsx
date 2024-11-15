@@ -143,8 +143,8 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
 
   if (isLoading && !riskData.length) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="flex justify-center items-center h-full p-4">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
       </div>
     )
   }

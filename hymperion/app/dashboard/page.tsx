@@ -34,8 +34,8 @@ function Dashboard() {
         <div className="min-h-full p-4 space-y-4">
           <div className="flex space-x-4">
             {/* Imagen principal */}
-            <div className="w-1/4 bg-black shadow-md rounded-lg flex items-center justify-center p-4">
-              <Image src="/images/logo2.png" alt="Logo" className="max-w-full h-auto" width={180} height={180}/>
+            <div className="w-1/4 bg-white shadow-md rounded-lg flex items-center justify-center">
+              <Image src="/images/logo2.png" alt="Logo" className="max-w-full h-auto" width={200} height={200}/>
             </div>
 
             {/* Gráfica de pastel */}
@@ -56,6 +56,9 @@ function Dashboard() {
 
 export default withPageAuthRequired(Dashboard, {
   returnTo: '/dashboard',
-  onRedirecting: () => <div>Loading...</div>,
+  onRedirecting: () => 
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-500"></div>
+  </div>,
   onError: error => <div>Error: {error.message}</div>
 })

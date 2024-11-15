@@ -138,11 +138,30 @@ export default function NetworkAlerts() {
       console.warn('Ruta no reconocida.')
     }
   }
+  const memoizedRiskData = useCallback(() => {
+    const data = localStorage.getItem('riskData')
+    if (data) {
+      setRiskData(JSON.parse(data))
+      setIsLoading(false)
+    } else {
+      fetchRiskData()
+    }
+  }, [fetchRiskData])
+
+  useEffect(() => {
+    memoizedRiskData()
+  }, [memoizedRiskData])
+
+  useEffect(() => {
+    if (riskData.length > 0) {
+      localStorage.setItem('riskData', JSON.stringify(riskData))
+    }
+  }, [riskData])
 
   if (isLoading && !riskData.length) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-500"></div>
       </div>
     )
   }
