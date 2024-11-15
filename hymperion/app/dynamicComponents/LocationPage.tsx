@@ -149,7 +149,7 @@ function TicketsList({ sedes }: { sedes: string }) {
   }, [location])
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-full">Loading tickets...</div>
+    return <div className="flex items-center justify-center h-full">Loading events...</div>
   }
 
   if (error) {

@@ -64,7 +64,11 @@ export default function RiskDistributionChart() {
   }, [fetchRiskData])
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64">Loading...</div>
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-blue-500"></div>
+      </div>
+    )
   }
 
   return (
