@@ -72,7 +72,7 @@ export default function AegisLandingPage() {
             }`}
           >
             <Link href="/dashboard">
-               Go to Dashboard
+               Login
             </Link>
           </button>
             </motion.div>
