@@ -71,15 +71,9 @@ export default function AegisLandingPage() {
               user ? 'bg-blue-500 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-700'
             }`}
           >
-            {user ? (
-              <Link href="/dashboard">
-                Go to Dashboard
-              </Link>
-            ) : (
-              <Link href="/api/auth/login">
-                Login
-              </Link>
-            )}
+            <Link href="/dashboard">
+               Go to Dashboard
+            </Link>
           </button>
             </motion.div>
           </motion.div>
