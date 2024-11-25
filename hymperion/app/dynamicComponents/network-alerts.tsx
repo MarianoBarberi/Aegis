@@ -32,6 +32,23 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   const decodedSede = decodeURIComponent(sedes)
+  let decodedSedeText = decodedSede
+  switch (decodedSedeText.toLowerCase()) {
+    case 'sede central':
+      decodedSedeText = 'Central Office'
+      break
+    case 'sede 1':
+      decodedSedeText = 'Laboratory 1'
+      break
+    case 'sede 2':
+      decodedSedeText = 'Laboratory 2'
+      break
+    case 'sede 3':
+      decodedSedeText = 'Laboratory 3'
+      break
+    default:
+      break
+  }
 
   const fetchRiskData = useCallback(async () => {
     setIsLoading(true)
@@ -169,7 +186,7 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
     <div className="w-full h-full max-h-full bg-white shadow-lg rounded-lg overflow-hidden flex flex-col">
       <div className="p-4 bg-gray-50 border-b border-gray-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Events of {decodedSede}</h2>
+          <h2 className="text-xl font-bold text-gray-800">Events of {decodedSedeText}</h2>
           {lastUpdated && (
             <p className="text-sm text-gray-600">
               Last updated: {lastUpdated.toLocaleTimeString()}
