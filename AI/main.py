@@ -55,6 +55,9 @@ def main():
                     else:
                         analysis_result_openai['answer'] = "Error: No match found."
 
+                    if not conn.is_connected():
+                        conn.reconnect()
+
                     # Post the analysis result to the database
                     post_output(conn, analysis_result_openai["answer"], risk_score, risk_description, risk_mitigation, risk_impact, row[6], row[2] ,"OpenAI", idIsoFo=row[0])
 
