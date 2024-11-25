@@ -101,6 +101,30 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
     }
   }
 
+  const deleteTicket = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5000/tickets/${id}`, {
+        method: 'DELETE',
+      })
+      
+      if (response.ok) {
+        fetchRiskData() // Refresca la lista después de eliminar el ticket
+        console.log(`Ticket con id ${id} eliminado`)
+      } else {
+        console.error('Error al eliminar el ticket')
+      }
+    } catch (error) {
+      console.error('Error eliminando el ticket:', error)
+    }
+  }
+
+  const deleteTicketWithConfirmation = async (id: number) => {
+    const confirmed = window.confirm("¿Estás seguro de que deseas eliminar este ticket? Esta acción no se puede deshacer.")
+    if (confirmed) {
+      await deleteTicket(id) // Llama a la función de eliminación si el usuario confirma
+    }
+  }
+
   const getRiskColor = (score: number) => {
     switch (score) {
       case 1: return 'text-green-500'
@@ -289,13 +313,24 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
                   <MapPin className="h-4 w-4" />
                   <span>{selectedRisk.ubicacion || 'Sede no especificada'}</span>
                 </div>
-                <button
-                    onClick={() => updateTicketStatus(selectedRisk.id, 'Pending')}
-                    className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
-                  >
-                    <XCircle className="h-5 w-5 inline-block mr-2" />
-                    Mark as Pending
+                <div className="flex items-center space-x-4 mt-4">
+                  <button
+                      onClick={() => updateTicketStatus(selectedRisk.id, 'pendiente')}
+                      className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+                    >
+                      <CheckCircle className="h-5 w-5 inline-block mr-2" />
+                      Pending
+                    </button>
+                </div>
+                <div className="flex items-center space-x-4 mt-4">
+                  <button
+                        onClick={() => deleteTicketWithConfirmation(selectedRisk.id)}
+                        className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-red-600 transition-colors"
+                      >
+                        <CheckCircle className="h-5 w-5 inline-block mr-2" />
+                        Delete
                   </button>
+                </div>
               </div>
             </div>
           </div>

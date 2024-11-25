@@ -14,12 +14,12 @@ interface RiskData {
 }
 
 const RISK_LEVELS = [
-  { name: 'Low', value: 1 },
-  { name: 'Moderate', value: 2 },
-  { name: 'High', value: 3 },
-  { name: 'Severe', value: 4 },
-  { name: 'Critical', value: 5 }
-];
+  { name: 'Very Low', value: 1 },
+  { name: 'Low', value: 2 },
+  { name: 'Medium', value: 3 },
+  { name: 'High', value: 4 },
+  { name: 'Very High', value: 5 },
+]
 
 const COLORS = ['#00c176', '#88c100', '#fabe28', '#ff8a00', '#ff003c']
 const UPDATE_INTERVAL = 60000; // 1 minuto

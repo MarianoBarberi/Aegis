@@ -283,7 +283,7 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
               </button>
             </div>
             <div className="space-y-4">
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(selectedRisk.risk_score)}`}>
+            <div className="flex items-center space-x-2" style={{ color: getRiskColor(selectedRisk.risk_score) }}>
                 <ShieldAlert className="h-5 w-5 mr-2" />
                 Risk Level {selectedRisk.risk_score}: {getRiskLevelText(selectedRisk.risk_score)}
               </div>
@@ -302,25 +302,21 @@ export default function NetworkAlerts({ sedes }: { sedes: string }) {
               <div className="flex justify-between text-sm text-gray-500">
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{selectedRisk.fecha ? new Date(selectedRisk.fecha).toLocaleString() : 'Date unknown'}</span>
+                  <span>{selectedRisk.fecha}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <MapPin className="h-4 w-4" />
-                  <span>{selectedRisk.ubicacion || 'Location unknown'}</span>
+                  <span>{selectedRisk.ubicacion || 'Sede no especificada'}</span>
                 </div>
-              </div>
-              <div>
-                <h4 className="font-semibold">Status:</h4>
-                <p>{selectedRisk.estado}</p>
-              </div>
-              <div className="flex items-center space-x-4 mt-4">
-                <button
-                  onClick={() => updateTicketStatus(selectedRisk.id, 'resuelto')}
-                  className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                >
-                  <CheckCircle className="h-5 w-5 inline-block mr-2" />
-                  Mark as Resolved
-                </button>
+                <div className="flex items-center space-x-4 mt-4">
+                  <button
+                      onClick={() => updateTicketStatus(selectedRisk.id, 'resuelto')}
+                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                    >
+                      <CheckCircle className="h-5 w-5 inline-block mr-2" />
+                      Mark as Resolved
+                    </button>
+                </div>
               </div>
             </div>
           </div>
